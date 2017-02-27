@@ -61,7 +61,7 @@ public class Main {
 				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
 				e.gc.drawFocus(5, 5, rect.width - 10, rect.height - 10);
 				e.gc.drawText("You can draw text directly on a canvas", 60, 60);
-				List<Triangle> tList = makeTriangles(100, 300, 100, 1);
+				List<Triangle> tList = makeTriangles(100, 600, 500, 6);
 				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_BLACK));
 				for (Triangle t : tList) {
 					e.gc.fillPolygon(t.makeTriangle());
@@ -82,10 +82,19 @@ public class Main {
 
 	List<Triangle> makeTriangles(int x, int y, int sideLength, int depth) {
 		List<Triangle> tList = new ArrayList<>();
-
-		if (depth == 1) {
-			tList.add(new Triangle(x, y, sideLength));
+		Triangle t = new Triangle(x, y, sideLength);
+		if (depth <= 1) {
+			tList.add(t);
+		} else {
+			int midX = t.getXMidpoint();
+			int midY = t.getYMidpoint();
+			int topX = (x + midX) / 2;
+			int halfSide = sideLength / 2;
+			tList.addAll(makeTriangles(x, y, halfSide, depth - 1));
+			tList.addAll(makeTriangles(midX, y, halfSide, depth - 1));
+			tList.addAll(makeTriangles(topX, midY, halfSide, depth - 1));
 		}
+
 		return tList;
 	}
 }

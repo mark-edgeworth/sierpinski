@@ -7,6 +7,15 @@ public class Triangle {
 	private int originY;
 	private int sideLength;
 
+	/**
+	 * Constructor
+	 *
+	 * @param x
+	 *            origin X-coordinate
+	 * @param y
+	 *            origin Y-coordinate
+	 * @param sideLength
+	 */
 	public Triangle(int x, int y, int sideLength) {
 		this.originX = x;
 		this.originY = y;
@@ -36,11 +45,23 @@ public class Triangle {
 		points[3] = originY;
 
 		// Apex
-		points[4] = originX + sideLength / 2;
-		points[5] = originY - (int) (HEIGHT_FACTOR * sideLength);
+		points[4] = getXMidpoint();
+		points[5] = originY - getHeight();
 
 		// Closure is not required for filled polygons in SWT
 
 		return points;
+	}
+
+	public int getXMidpoint() {
+		return originX + sideLength / 2;
+	}
+
+	public int getHeight() {
+		return (int) (HEIGHT_FACTOR * sideLength);
+	}
+
+	public int getYMidpoint() {
+		return originY - (getHeight() / 2);
 	}
 }
