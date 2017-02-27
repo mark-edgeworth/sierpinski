@@ -1,9 +1,11 @@
 package sierpinski;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -15,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
  * This class demonstrates a Canvas
  */
 public class Main {
+
 	/**
 	 * Runs the application
 	 */
@@ -58,6 +61,11 @@ public class Main {
 				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
 				e.gc.drawFocus(5, 5, rect.width - 10, rect.height - 10);
 				e.gc.drawText("You can draw text directly on a canvas", 60, 60);
+				List<Triangle> tList = makeTriangles(100, 300, 100, 1);
+				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_BLACK));
+				for (Triangle t : tList) {
+					e.gc.fillPolygon(t.makeTriangle());
+				}
 			}
 		});
 	}
@@ -72,17 +80,12 @@ public class Main {
 		new Main().run();
 	}
 
-	/**
-	 * Creates a set of points representing a triangle at a specific position
-	 * and side length
-	 *
-	 * @param origin
-	 *            The position of the lower left vertex
-	 * @param side
-	 *            The length of a side
-	 * @return The set of six points (three sets of (x, y) coordinate pairs)
-	 */
-	int[] makeTriangle(Point origin, int side) {
-		return new int[6];
+	List<Triangle> makeTriangles(int x, int y, int sideLength, int depth) {
+		List<Triangle> tList = new ArrayList<>();
+
+		if (depth == 1) {
+			tList.add(new Triangle(x, y, sideLength));
+		}
+		return tList;
 	}
 }
