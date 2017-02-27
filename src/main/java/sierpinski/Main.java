@@ -52,6 +52,12 @@ public class Main {
 		button.setBounds(10, 10, 300, 40);
 		button.setText("You can place widgets on a canvas");
 
+		MouseTracker mouseTracker = new MouseTracker(canvas, 100, 600);
+
+		canvas.addMouseWheelListener(mouseTracker);
+		canvas.addMouseMoveListener(mouseTracker);
+		canvas.addMouseListener(mouseTracker);
+
 		// Create a paint handler for the canvas
 		canvas.addPaintListener(new PaintListener() {
 			@Override
@@ -61,7 +67,8 @@ public class Main {
 				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
 				e.gc.drawFocus(5, 5, rect.width - 10, rect.height - 10);
 				e.gc.drawText("You can draw text directly on a canvas", 60, 60);
-				List<Triangle> tList = makeTriangles(100, 600, 500, 6);
+				List<Triangle> tList = makeTrianglesTopDown(mouseTracker.getOriginX(), mouseTracker.getOriginY(), 500,
+						mouseTracker.getZoom());
 				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_BLACK));
 				for (Triangle t : tList) {
 					e.gc.fillPolygon(t.makeTriangle());
@@ -80,21 +87,32 @@ public class Main {
 		new Main().run();
 	}
 
-	List<Triangle> makeTriangles(int x, int y, int sideLength, int depth) {
+	List<Triangle> makeTrianglesTopDown(int x, int y, int sideLength, int depth) {
 		List<Triangle> tList = new ArrayList<>();
 		Triangle t = new Triangle(x, y, sideLength);
-		if (depth <= 1) {
+		// Limit the minimum triangle size...
+		if (depth <= 1 || sideLength < 20) {
 			tList.add(t);
 		} else {
 			int midX = t.getXMidpoint();
 			int midY = t.getYMidpoint();
 			int topX = (x + midX) / 2;
-			int halfSide = sideLength / 2;
-			tList.addAll(makeTriangles(x, y, halfSide, depth - 1));
-			tList.addAll(makeTriangles(midX, y, halfSide, depth - 1));
-			tList.addAll(makeTriangles(topX, midY, halfSide, depth - 1));
+			int halfSide = (sideLength / 2) + 1;
+			tList.addAll(makeTrianglesTopDown(x, y, halfSide, depth - 1));
+			tList.addAll(makeTrianglesTopDown(midX, y, halfSide, depth - 1));
+			tList.addAll(makeTrianglesTopDown(topX, midY, halfSide, depth - 1));
 		}
 
+		return tList;
+	}
+
+	List<Triangle> makeTrianglesBottomUp(int x, int y, int sideLength, int depth) {
+		List<Triangle> tList = new ArrayList<>();
+		Triangle t = new Triangle(x, y, sideLength);
+
+		if (depth <= 1) {
+			tList.add(t);
+		}
 		return tList;
 	}
 }
