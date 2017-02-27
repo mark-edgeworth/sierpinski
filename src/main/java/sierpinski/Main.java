@@ -82,7 +82,7 @@ public class Main {
 	 *            The length of a side
 	 * @return The set of six points (three sets of (x, y) coordinate pairs)
 	 */
-	private int[] makeTriangle(Point origin, int side) {
+	int[] makeTriangle(Point origin, int side) {
 		return new int[6];
 	}
 }
