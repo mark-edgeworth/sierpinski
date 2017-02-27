@@ -3,6 +3,7 @@ package sierpinski;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -65,9 +66,23 @@ public class Main {
 	 * The application entry point
 	 *
 	 * @param args
-	 *            the command line arguments
+	 *            the command line arguments (currently none)
 	 */
 	public static void main(String[] args) {
 		new Main().run();
+	}
+
+	/**
+	 * Creates a set of points representing a triangle at a specific position
+	 * and side length
+	 *
+	 * @param origin
+	 *            The position of the lower left vertex
+	 * @param side
+	 *            The length of a side
+	 * @return The set of six points (three sets of (x, y) coordinate pairs)
+	 */
+	private int[] makeTriangle(Point origin, int side) {
+		return new int[6];
 	}
 }
