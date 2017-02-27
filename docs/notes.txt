@@ -1,0 +1,3 @@
+SWT
+  Licenced under the Eclipse public licence (EPL):
+	http://www.eclipse.org/legal/epl-v10.html 
