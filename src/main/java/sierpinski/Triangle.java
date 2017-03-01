@@ -1,5 +1,7 @@
 package sierpinski;
 
+import org.eclipse.swt.graphics.Rectangle;
+
 public class Triangle {
 	private static final float HEIGHT_FACTOR = 0.866f; // SQRT(3)/2
 
@@ -63,5 +65,29 @@ public class Triangle {
 
 	public int getYMidpoint() {
 		return originY - (getHeight() / 2);
+	}
+
+	public boolean isVisible(Rectangle viewport) {
+		// Triangle all to the left of viewport left edge
+		if (originX + (sideLength - 1) < viewport.x) {
+			return false;
+		}
+
+		// Triangle all above viewport top edge
+		if (originY < viewport.y) {
+			return false;
+		}
+
+		// Triangle all to the right of viewport right edge
+		if (originX > viewport.x + viewport.width) {
+			return false;
+		}
+
+		// Triangle all below of viewport bottom edge
+		if (originY - getHeight() > viewport.y + viewport.height) {
+			return false;
+		}
+
+		return true;
 	}
 }

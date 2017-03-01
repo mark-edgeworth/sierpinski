@@ -46,20 +46,16 @@ public class MouseTracker implements MouseWheelListener, MouseMoveListener, Mous
 		originX = originAtDragStart.x + (e.x - dragStartPoint.x);
 		originY = originAtDragStart.y + (e.y - dragStartPoint.y);
 
-		System.out.println("Moved: " + e);
-
 		canvas.redraw();
 	}
 
 	@Override
 	public void mouseUp(MouseEvent e) {
-		System.out.println("Mouse-up: " + e);
 		dragStartPoint = null;
 	}
 
 	@Override
 	public void mouseDown(MouseEvent e) {
-		System.out.println("Mouse-down: " + e);
 		dragStartPoint = new Point(e.x, e.y);
 		originAtDragStart = new Point(originX, originY);
 	}
@@ -69,6 +65,12 @@ public class MouseTracker implements MouseWheelListener, MouseMoveListener, Mous
 		System.out.println("Mouse-2-click");
 	}
 
+	/**
+	 * The zoom level is a value representing how deep into the structure the
+	 * user has selected to view.
+	 *
+	 * @return the current zoom level.
+	 */
 	public int getZoom() {
 		return (int) zoom;
 	}
