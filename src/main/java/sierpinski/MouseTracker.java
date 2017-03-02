@@ -26,7 +26,7 @@ public class MouseTracker implements MouseWheelListener, MouseMoveListener, Mous
 		this.originY = bounds.height - 10;
 
 		// Set initial size based on size of canvas
-		this.baseLength = Math.min(bounds.width, (int) (bounds.height * Triangle.HEIGHT_FACTOR)) - 20;
+		this.baseLength = Math.min(bounds.width, (int) (bounds.height / Triangle.HEIGHT_FACTOR)) - 20;
 	}
 
 	@Override
@@ -40,15 +40,17 @@ public class MouseTracker implements MouseWheelListener, MouseMoveListener, Mous
 			return; // No change
 		}
 
-		originX = e.x - (int) ((e.x - originX) * zoomFactor);
-		originY = e.y - (int) ((e.y - originY) * zoomFactor);
-
 		zoom *= zoomFactor;
 
 		// Constrain the zoom
 		if (zoom < 1) {
 			zoom = 1;
+			zoomFactor = 1;
 		}
+
+		originX = e.x - (int) ((e.x - originX) * zoomFactor);
+		originY = e.y - (int) ((e.y - originY) * zoomFactor);
+
 		canvas.redraw();
 	}
 
@@ -100,5 +102,9 @@ public class MouseTracker implements MouseWheelListener, MouseMoveListener, Mous
 
 	public int getBaseLength() {
 		return (int) (baseLength * zoom);
+	}
+
+	public Rectangle getCurrentViewport() {
+		return canvas.getBounds();
 	}
 }
