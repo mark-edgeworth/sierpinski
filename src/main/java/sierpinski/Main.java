@@ -52,7 +52,8 @@ public class Main {
 		button.setBounds(10, 10, 300, 40);
 		button.setText("You can place widgets on a canvas");
 
-		MouseTracker mouseTracker = new MouseTracker(canvas, 100, 600);
+		Rectangle bounds = shell.getClientArea();
+		MouseTracker mouseTracker = new MouseTracker(canvas, bounds);
 
 		canvas.addMouseWheelListener(mouseTracker);
 		canvas.addMouseMoveListener(mouseTracker);
@@ -67,8 +68,8 @@ public class Main {
 				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
 				e.gc.drawFocus(5, 5, rect.width - 10, rect.height - 10);
 				e.gc.drawText("You can draw text directly on a canvas", 60, 60);
-				List<Triangle> tList = makeTrianglesTopDown(mouseTracker.getOriginX(), mouseTracker.getOriginY(), 500,
-						mouseTracker.getZoom());
+				List<Triangle> tList = makeTrianglesTopDown(mouseTracker.getOriginX(), mouseTracker.getOriginY(),
+						mouseTracker.getBaseLength(), mouseTracker.getZoom());
 				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_BLACK));
 				for (Triangle t : tList) {
 					e.gc.fillPolygon(t.makeTriangle());
@@ -110,9 +111,6 @@ public class Main {
 		List<Triangle> tList = new ArrayList<>();
 		Triangle t = new Triangle(x, y, sideLength);
 
-		if (depth <= 1) {
-			tList.add(t);
-		}
 		return tList;
 	}
 }

@@ -2,8 +2,14 @@ package sierpinski;
 
 import org.eclipse.swt.graphics.Rectangle;
 
+/**
+ * Class representing a single triangular shape which may or may not be drawn.
+ * 
+ * @author mse
+ *
+ */
 public class Triangle {
-	private static final float HEIGHT_FACTOR = 0.866f; // SQRT(3)/2
+	public static final float HEIGHT_FACTOR = 0.866f; // SQRT(3)/2
 
 	private int originX;
 	private int originY;
@@ -55,18 +61,39 @@ public class Triangle {
 		return points;
 	}
 
+	/**
+	 *
+	 * @return the X-coordinate of the midpoint of the triangle base
+	 */
 	public int getXMidpoint() {
 		return originX + sideLength / 2;
 	}
 
+	/**
+	 *
+	 * @return the height of the trianle, in pixels
+	 */
 	public int getHeight() {
 		return (int) (HEIGHT_FACTOR * sideLength);
 	}
 
+	/**
+	 *
+	 * @return the Y-coordinate of the midpoint between base and apex
+	 */
 	public int getYMidpoint() {
 		return originY - (getHeight() / 2);
 	}
 
+	/**
+	 * Determines whether this triangle has any visible part within the supplied
+	 * bounds. This is an optimisation step, allowing culling of invisible
+	 * elements to improve performance.
+	 * 
+	 * @param viewport
+	 *            The bounds of the visible area
+	 * @return true if any part is visible, false if not.
+	 */
 	public boolean isVisible(Rectangle viewport) {
 		// Triangle all to the left of viewport left edge
 		if (originX + (sideLength - 1) < viewport.x) {

@@ -5,6 +5,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
 public class MouseTracker implements MouseWheelListener, MouseMoveListener, MouseListener {
@@ -15,20 +16,34 @@ public class MouseTracker implements MouseWheelListener, MouseMoveListener, Mous
 	private int originX;
 	private int originY;
 	private Point originAtDragStart;
+	private int baseLength;
+	private static final float ZOOM_FACTOR_UP = 1.1f;
+	private static final float ZOOM_FACTOR_DOWN = 1 / ZOOM_FACTOR_UP;
 
-	public MouseTracker(Canvas canvas, int originX, int originY) {
+	public MouseTracker(Canvas canvas, Rectangle bounds) {
 		this.canvas = canvas;
-		this.originX = originX;
-		this.originY = originY;
+		this.originX = 10;
+		this.originY = bounds.height - 10;
+
+		// Set initial size based on size of canvas
+		this.baseLength = Math.min(bounds.width, (int) (bounds.height * Triangle.HEIGHT_FACTOR)) - 20;
 	}
 
 	@Override
 	public void mouseScrolled(MouseEvent e) {
+		float zoomFactor;
 		if (e.count < 0) {
-			zoom *= 0.9f;
+			zoomFactor = ZOOM_FACTOR_DOWN;
 		} else if (e.count > 0) {
-			zoom *= 1.1f;
+			zoomFactor = ZOOM_FACTOR_UP;
+		} else {
+			return; // No change
 		}
+
+		originX = e.x - (int) ((e.x - originX) * zoomFactor);
+		originY = e.y - (int) ((e.y - originY) * zoomFactor);
+
+		zoom *= zoomFactor;
 
 		// Constrain the zoom
 		if (zoom < 1) {
@@ -81,5 +96,9 @@ public class MouseTracker implements MouseWheelListener, MouseMoveListener, Mous
 
 	public int getOriginY() {
 		return originY;
+	}
+
+	public int getBaseLength() {
+		return (int) (baseLength * zoom);
 	}
 }
