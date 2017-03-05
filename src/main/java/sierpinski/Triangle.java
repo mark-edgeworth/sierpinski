@@ -4,7 +4,7 @@ import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * Class representing a single triangular shape which may or may not be drawn.
- * 
+ *
  * @author mse
  *
  */
@@ -23,6 +23,7 @@ public class Triangle {
 	 * @param y
 	 *            origin Y-coordinate
 	 * @param sideLength
+	 *            the length of any side of the equilateral triangle
 	 */
 	public Triangle(int x, int y, int sideLength) {
 		this.originX = x;
@@ -71,7 +72,7 @@ public class Triangle {
 
 	/**
 	 *
-	 * @return the height of the trianle, in pixels
+	 * @return the height of the triangle, in pixels
 	 */
 	public int getHeight() {
 		return (int) (HEIGHT_FACTOR * sideLength);
@@ -89,7 +90,7 @@ public class Triangle {
 	 * Determines whether this triangle has any visible part within the supplied
 	 * bounds. This is an optimisation step, allowing culling of invisible
 	 * elements to improve performance.
-	 * 
+	 *
 	 * @param viewport
 	 *            The bounds of the visible area
 	 * @return true if any part is visible, false if not.

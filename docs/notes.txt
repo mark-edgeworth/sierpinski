@@ -3,9 +3,9 @@ SWT
 	http://www.eclipse.org/legal/epl-v10.html 
 
 Observations
-There is a practical minimum size for a triangle on screen.
-Zooming in causes lots of outer-level triangles to move outside of the drawn viewport.
-Full recursion from top to max zoom will eventually run out of stack if the zoom level is too large.
+* There is a practical minimum size for a triangle on screen.
+* Zooming in causes lots of outer-level triangles to move outside of the drawn viewport.
+* Full recursion from top to max zoom will eventually run out of stack if the zoom level is too large.
 	
 Development flow
  - Draw a basic canvas in a window. Used an example from SWT snippets to get going quickly. Fixed-up a maven POM file and created a basic project to house this. All runs fine; window appears.
@@ -16,11 +16,11 @@ Development flow
 - Build algorithm for splitting one triangle into 4 (3 drawn). Tested visually. This is naturally recursive given the nature of the problem, although need to take care not to bust stack limits. Also need to find a way to allow infinite depth recursion.
 - Added mouse tracking to the canvas to handle zoom. Initially as a set of discrete listeners, then refactor into a single class  handling all mouse interaction. This is simpler and avoids the proliferation of lots of nasty global variables.
 - Added mouse click and movement handling to allow panning of the image. Origin position handling is now delegated to this class.
-All this works to a point. Can now zoom in and out, and pan around. Now need to think about infinite zoom-in. 
-
-Potential for starting with smallest triangle and work outwards. Stop moving out when the viewport boundary is hit. Then work back down filling in the detail. This will limit stack usage.
-
+All this works to a point. Can now zoom in and out, and pan around.
+- Fixed up origin positioning to allow image to remain in the same place when zoomed in or out.
+- Created a maven POM to allow single jar to be built; to include the SWT dependencies and to set the main class.
 
 Optimisation notes
-Could potentially draw combinations of triangles to an image object then blit this into multiple positions on the screen; seems overly complex and concern for number of display resource handles.
-Could have made more use of the SWT graphics transform capability to resize/zoom/pan but ultimately this comes up against canvas size limits with unlimited zoom-in depth. 
+* Could potentially draw combinations of triangles to an image object then blit this into multiple positions on the screen; seems overly complex and concern for number of display resource handles.
+* Could have made more use of the SWT graphics transform capability to resize/zoom/pan but ultimately this comes up against canvas size limits with unlimited zoom-in depth. 
+* Potential for starting with smallest triangle and work outwards. Stop moving out when the viewport boundary is hit. Then work back down filling in the detail. This could limit stack usage. However, using this approach I'd need to keep track of the 'path' from current triangle to the main so as to correctly manufacture either the left, right or top all the way up.

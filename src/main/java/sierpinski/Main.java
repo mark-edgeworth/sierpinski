@@ -13,7 +13,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class demonstrates a Canvas
+ * Main entry point. The skeleton of this class was taken from the SWT snippets
+ * Canvas example (to get a basic canvas in a window).
  */
 public class Main {
 
@@ -68,8 +69,10 @@ public class Main {
 				e.gc.drawFocus(5, 5, rect.width - 10, rect.height - 10);
 				e.gc.drawText("Zoom level is " + mouseTracker.getZoom(), 60, 60);
 				List<Triangle> tList = makeTrianglesTopDown(mouseTracker.getOriginX(), mouseTracker.getOriginY(),
-						mouseTracker.getBaseLength(), mouseTracker.getZoom(), mouseTracker);
+						mouseTracker.getBaseLength(), mouseTracker.getZoom(), mouseTracker.getCurrentViewport());
 				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_BLACK));
+
+				// Draw each triangle point list.
 				for (Triangle t : tList) {
 					e.gc.fillPolygon(t.makeTriangle());
 				}
@@ -87,22 +90,40 @@ public class Main {
 		new Main().run();
 	}
 
-	List<Triangle> makeTrianglesTopDown(int x, int y, int sideLength, int depth, MouseTracker tracker) {
+	/**
+	 * Recursive function to build the list of triangles using the specified
+	 * algorithm. This is recursive, each level creates either a single triangle
+	 * or the triangles below it in the hierarchy. To (dramatically) improve
+	 * performance, each triangle is tested for its appearance in the current
+	 * viewport. If it cannot be seen then it and all below it are culled.
+	 *
+	 * Recursion here will eventually restrict the depth to which the structure
+	 * can be explored.
+	 *
+	 * @param x
+	 * @param y
+	 * @param sideLength
+	 * @param currentLevel
+	 * @param tracker
+	 * @return the list of triangles to be drawn
+	 */
+	List<Triangle> makeTrianglesTopDown(int x, int y, int sideLength, int currentLevel, Rectangle viewport) {
 		List<Triangle> tList = new ArrayList<>();
 		Triangle t = new Triangle(x, y, sideLength);
 
-		if (t.isVisible(tracker.getCurrentViewport())) {
+		if (t.isVisible(viewport)) {
 			// Limit the minimum triangle size...
-			if (depth <= 1 || sideLength < 20) {
+			if (currentLevel <= 1 || sideLength < 20) {
 				tList.add(t);
 			} else {
 				int midX = t.getXMidpoint();
 				int midY = t.getYMidpoint();
 				int topX = (x + midX) / 2;
 				int halfSide = (sideLength / 2) + 1;
-				tList.addAll(makeTrianglesTopDown(x, y, halfSide, depth - 1, tracker));
-				tList.addAll(makeTrianglesTopDown(midX, y, halfSide, depth - 1, tracker));
-				tList.addAll(makeTrianglesTopDown(topX, midY, halfSide, depth - 1, tracker));
+				int nextLevel = currentLevel - 1;
+				tList.addAll(makeTrianglesTopDown(x, y, halfSide, nextLevel, viewport));
+				tList.addAll(makeTrianglesTopDown(midX, y, halfSide, nextLevel, viewport));
+				tList.addAll(makeTrianglesTopDown(topX, midY, halfSide, nextLevel, viewport));
 			}
 		}
 		return tList;
