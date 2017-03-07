@@ -19,8 +19,15 @@ Development flow
 All this works to a point. Can now zoom in and out, and pan around.
 - Fixed up origin positioning to allow image to remain in the same place when zoomed in or out.
 - Created a maven POM to allow single jar to be built; to include the SWT dependencies and to set the main class.
+- Tidy-up comments and refactor...
 
 Optimisation notes
 * Could potentially draw combinations of triangles to an image object then blit this into multiple positions on the screen; seems overly complex and concern for number of display resource handles.
 * Could have made more use of the SWT graphics transform capability to resize/zoom/pan but ultimately this comes up against canvas size limits with unlimited zoom-in depth. 
 * Potential for starting with smallest triangle and work outwards. Stop moving out when the viewport boundary is hit. Then work back down filling in the detail. This could limit stack usage. However, using this approach I'd need to keep track of the 'path' from current triangle to the main so as to correctly manufacture either the left, right or top all the way up.
+
+Next steps
+This app may well be sufficient to illustrate the sierpinski figure. However, there are some improvements that could follow:
+* The recursion depth is currently limited to 25 by the dynamic range of the coordinate numbers. Fixing this would need a revision to the algorithm for calculating triangle position which would not depend on the precise location of the overall figure origin.
+* There is some imprecision in the placement of triangles at some scales.
+* The zoom-up/zoom-down logic could be added to the test suite.

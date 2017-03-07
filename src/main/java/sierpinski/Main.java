@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -17,22 +18,40 @@ import org.eclipse.swt.widgets.Shell;
  * Canvas example (to get a basic canvas in a window).
  */
 public class Main {
+	/**
+	 * The application entry point
+	 *
+	 * @param args
+	 *            the command line arguments (currently none)
+	 */
+	public static void main(String[] args) {
+		new Main().run();
+	}
 
 	/**
-	 * Runs the application
+	 * Runs the application. This creates a new window on screen, then runs
+	 * around the event loop until told to quit.
 	 */
 	public void run() {
-		Display display = new Display();
-		Shell shell = new Shell(display);
-		shell.setText("Sierpinski Triangle Explorer");
-		createContents(shell);
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+		Display display = null;
+
+		try {
+			display = new Display();
+
+			Shell shell = new Shell(display);
+			shell.setText("Sierpinski Triangle Explorer");
+			createContents(shell);
+			shell.open();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+		} finally {
+			if (display != null) {
+				display.dispose();
 			}
 		}
-		display.dispose();
 	}
 
 	/**
@@ -67,9 +86,12 @@ public class Main {
 				Rectangle rect = ((Canvas) e.widget).getBounds();
 				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_RED));
 				e.gc.drawFocus(5, 5, rect.width - 10, rect.height - 10);
+				e.gc.drawText("Depth is " + mouseTracker.getDepth(), 60, 30);
 				e.gc.drawText("Zoom level is " + mouseTracker.getZoom(), 60, 60);
-				List<Triangle> tList = makeTrianglesTopDown(mouseTracker.getOriginX(), mouseTracker.getOriginY(),
-						mouseTracker.getBaseLength(), mouseTracker.getZoom(), mouseTracker.getCurrentViewport());
+
+				Point origin = mouseTracker.getOrigin();
+				List<Triangle> tList = makeTrianglesTopDown(origin.x, origin.y, mouseTracker.getFullFigureSideLength(),
+						mouseTracker.getDepth(), mouseTracker.getCurrentViewport());
 				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_BLACK));
 
 				// Draw each triangle point list.
@@ -78,16 +100,6 @@ public class Main {
 				}
 			}
 		});
-	}
-
-	/**
-	 * The application entry point
-	 *
-	 * @param args
-	 *            the command line arguments (currently none)
-	 */
-	public static void main(String[] args) {
-		new Main().run();
 	}
 
 	/**
@@ -104,6 +116,8 @@ public class Main {
 	 * @param y
 	 * @param sideLength
 	 * @param currentLevel
+	 *            The number of triangle divisions. Zero is a single triangle
+	 *            (no divisions)
 	 * @param tracker
 	 * @return the list of triangles to be drawn
 	 */
@@ -113,7 +127,7 @@ public class Main {
 
 		if (t.isVisible(viewport)) {
 			// Limit the minimum triangle size...
-			if (currentLevel <= 1 || sideLength < 20) {
+			if (currentLevel < 1 || sideLength < MouseTracker.MIN_SIDE_LENGTH) {
 				tList.add(t);
 			} else {
 				int midX = t.getXMidpoint();
