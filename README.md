@@ -15,6 +15,9 @@ Coded within eclipse; uses the SWT library for graphical support.
 Run using the following command:
  java -jar target/sierpinski-0.1-jar-with-dependencies.jar
  
+For your convenience I've uploaded a copy of the prebuilt jar file 
+to this archive...
+ 
 # How to use
-## Point and drag to move the figure around on the screen
-## Mouse wheel in and out to zoom in and out.
+* Point and drag to move the figure around on the screen
+* Mouse wheel in and out to zoom in and out.
